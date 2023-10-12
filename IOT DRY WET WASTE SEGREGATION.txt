@@ -1,0 +1,26 @@
+#include <Servo.h>
+Servo myservo;  // Create a Servo object for the servo motor
+int irPin = 2;   // Pin for IR sensor output
+int moisPin = A0;  // Pin for moisture sensor output
+int initialPos = 90;  // Initial position of the servo motor
+
+void setup() {
+  myservo.attach(9);  // Attach the servo to pin 9
+  pinMode(irPin, INPUT);  // Set IR sensor pin as input
+  myservo.write(initialPos);  // Set the servo motor to the initial position
+}
+
+void loop() {
+  int irValue = digitalRead(irPin);  // Read IR sensor output
+  if (irValue == LOW) {  // Object detected by IR sensor
+    delay(1000);  // Wait for 1 second to sense the moisture level
+    int moisValue = analogRead(moisPin);  // Read moisture sensor output
+    if (moisValue < 500) {  // Object is dry (moisValue is low)
+      myservo.write(0);  // Rotate servo motor towards left (0 degrees)
+    } else {  // Object is wet (moisValue is high)
+      myservo.write(180);  // Rotate servo motor towards right (180 degrees)
+    }
+    delay(2500);  // Hold the final position for 2.5 seconds
+    myservo.write(initialPos);  // Reset the servo motor to the initial position
+  }
+}
